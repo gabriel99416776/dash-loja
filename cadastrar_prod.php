@@ -1,3 +1,9 @@
+<?php
+include 'bd.php';
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -199,31 +205,71 @@
 
         </div>
 
-        <!-- MODAL -->
-        <div class="modal-bg" id="modalImagem">
 
-            <div class="modal">
+        <div class="table-data">
+            <div class="order">
+                <div class="head">
+                    <h3>Produtos Cadastrados</h3>
+                    <i class='bx bx-search'></i>
+                    <i class='bx bx-filter'></i>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Frete Gratis</th>
+                            <th>Promoção</th>
+                            <th>Ativo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $query = $pdo->query("SELECT id, img_prod, nome_prod, valor_prod, frete_gratis, promo_destaque, ativo FROM produtos_principais ORDER BY id DESC");
+                        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+                        ?>
 
-                <h2>Upload de Imagens</h2>
-
-                <input type="file" id="file1">
-                <input type="file" id="file2">
-                <input type="file" id="file3">
-
-                <button class="btn" onclick="salvarImagens()">
-                    Avançar
-                </button>
-
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td>
+                                    <img src="data:image/jpeg;base64,<?php echo $row['img_prod']; ?>" alt="">
+                                    <p><?php echo $row['nome_prod']; ?></p>
+                                </td>
+                                <td>R$ <?php echo number_format($row['valor_prod'], 2, ',', '.'); ?></td>
+                                <td><?php echo $row['frete_gratis'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                <td><?php echo $row['promo_destaque'] > 0 ? 'R$ ' . number_format($row['promo_destaque'], 2, ',', '.') : 'Sem Promoção'; ?></td>
+                                <td><?php echo $row['ativo'] == 1 ? 'Sim' : 'Não'; ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
-
+           
         </div>
-
     </main>
     <!-- MAIN -->
     </section>
     <!-- CONTENT -->
 
+    <!-- MODAL -->
+    <div class="modal-bg" id="modalImagem">
 
+        <div class="modal">
+
+            <h2>Upload de Imagens</h2>
+
+            <input type="file" id="file1">
+            <input type="file" id="file2">
+            <input type="file" id="file3">
+
+            <button class="btn" onclick="salvarImagens()">
+                Avançar
+            </button>
+
+        </div>
+
+    </div>
     <script src="script.js"></script>
     <script>
         const selectPromocao = document.getElementById('selectPromocao');
@@ -277,7 +323,9 @@
 
             reader.onload = function(e) {
 
-                callback(e.target.result);
+                const base64 = e.target.result.split(',')[1];
+
+                callback(base64);
 
             }
 
@@ -302,7 +350,7 @@
                     document.getElementById('img_prod').value = base64;
 
                     preview.innerHTML += `
-                <img src="${base64}">
+                <img src="data:image/jpeg;base64,${base64}">
             `;
 
                 });
@@ -316,7 +364,7 @@
                     document.getElementById('img_prod2').value = base64;
 
                     preview.innerHTML += `
-                <img src="${base64}">
+                <img src="data:image/jpeg;base64,${base64}">
             `;
 
                 });
@@ -330,7 +378,7 @@
                     document.getElementById('img_prod3').value = base64;
 
                     preview.innerHTML += `
-                <img src="${base64}">
+                <img src="data:image/jpeg;base64,${base64}">
             `;
 
                 });
