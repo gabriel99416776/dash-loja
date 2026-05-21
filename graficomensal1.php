@@ -1,21 +1,16 @@
 <?php
-include 'bd.php';
 
-/*
-|--------------------------------------------------------------------------
-| VENDAS DOS ÚLTIMOS 12 MESES
-|--------------------------------------------------------------------------
-*/
+include 'bd.php';
 
 $sql = "
 SELECT 
     MONTH(data_pedido) as mes,
-    YEAR(data_pedido) as ano,
     SUM(valor_total) as total
 FROM tbl_transacao
-WHERE status_pagamento = 'approved'
-GROUP BY YEAR(data_pedido), MONTH(data_pedido)
-ORDER BY YEAR(data_pedido), MONTH(data_pedido)
+WHERE YEAR(data_pedido) = YEAR(CURDATE())
+AND status_pagamento = 'approved'
+GROUP BY MONTH(data_pedido)
+ORDER BY MONTH(data_pedido)
 ";
 
 $stmt = $pdo->query($sql);
@@ -40,7 +35,7 @@ $dados = [];
 
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-    $labels[] = $meses[$row['mes']] . '/' . $row['ano'];
+    $labels[] = $meses[$row['mes']];
     $dados[] = $row['total'];
 }
 ?>

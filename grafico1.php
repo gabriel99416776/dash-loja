@@ -9,10 +9,10 @@ include 'bd.php';
 
 $sql = "
 SELECT 
-    e.bairro,
+    COALESCE(e.bairro, 'Sem bairro') as bairro,
     COUNT(*) as total
 FROM tbl_transacao t
-INNER JOIN enderecos e 
+LEFT JOIN enderecos e 
     ON t.id_endereco = e.id
 WHERE DATE(t.data_pedido) = CURDATE()
 GROUP BY e.bairro
@@ -45,19 +45,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     const ctx = document.getElementById('myChart');
 
     new Chart(ctx, {
-        type: 'polarArea',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Pedidos',
                 data: dados,
                 backgroundColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(75, 192, 192)',
-                    'rgb(255, 205, 86)',
-                    'rgb(201, 203, 207)',
-                    'rgb(54, 162, 235)'
-                ]
+                    '#ff6384',
+                    '#4bc0c0',
+                    '#ffcd56',
+                    '#c9cbcf',
+                    '#36a2eb'
+                ],
+                borderWidth: 1
             }]
         },
         options: {
